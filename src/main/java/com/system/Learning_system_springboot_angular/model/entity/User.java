@@ -1,4 +1,5 @@
 package com.system.Learning_system_springboot_angular.model.entity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.sql.Date;
 @Entity
@@ -19,11 +20,12 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private Status status;
-    @ManyToOne
-    @JoinColumn(name = "role_id", nullable = false)
+    @Enumerated(EnumType.STRING) // Map role as an enum
+    @Column(name = "role", nullable = false)
     private Role role;
     @ManyToOne
     @JoinColumn(name = "create_admin_id", nullable = false)
+    @JsonBackReference
     private User createAdmin;
     @Column(name = "create_date", nullable = false)
     private Date createDate;
@@ -40,6 +42,18 @@ public class User {
         if (this.status == null) {
             this.status = Status.ACTIVE;
         }
+    }
+    public User() {
+    }
+
+    // Parameterized constructor (optional)
+    public User(String email, String password, String name, Role role, Status status, User createAdmin) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.role = role;
+        this.status = status;
+        this.createAdmin = createAdmin;
     }
     public String getUserCode() {
         return userCode;
