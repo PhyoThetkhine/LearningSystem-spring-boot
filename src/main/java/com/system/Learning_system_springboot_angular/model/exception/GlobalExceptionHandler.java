@@ -13,8 +13,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<?>> handleInvalidFieldsException(InvalidFieldsException ex) {
         ApiResponse<?> response = ApiResponse.error(
                 HttpStatus.BAD_REQUEST.value(),
-                ex.getMessage(),
-                ex.getInvalidFields()
+                ex.getMessage()
         );
         return ResponseEntity.badRequest().body(response);
     }
@@ -24,6 +23,12 @@ public class GlobalExceptionHandler {
         ApiResponse<?> response = ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
         return ResponseEntity.internalServerError().body(response);
     }
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ApiResponse<?>> handleUserNotFoundException(ServiceException ex) {
+        ApiResponse<?> response = ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
+        return ResponseEntity.internalServerError().body(response);
+    }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<?>> handleGenericException(Exception ex) {
