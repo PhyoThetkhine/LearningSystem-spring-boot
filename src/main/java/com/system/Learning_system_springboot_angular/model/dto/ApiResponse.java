@@ -1,4 +1,4 @@
-package com.system.Learning_system_springboot_angular.model.util;
+package com.system.Learning_system_springboot_angular.model.dto;
 public class ApiResponse<T> {
     private int status;
     private String message;

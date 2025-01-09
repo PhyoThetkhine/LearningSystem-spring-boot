@@ -1,6 +1,6 @@
 package com.system.Learning_system_springboot_angular.model.exception;
 
-import com.system.Learning_system_springboot_angular.model.util.ApiResponse;
+import com.system.Learning_system_springboot_angular.model.dto.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

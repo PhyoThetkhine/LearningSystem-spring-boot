@@ -1,12 +1,19 @@
 package com.system.Learning_system_springboot_angular.controller;
+import com.system.Learning_system_springboot_angular.model.dto.ApiResponse;
+import com.system.Learning_system_springboot_angular.model.dto.ChangePasswordRequest;
+import com.system.Learning_system_springboot_angular.model.exception.InvalidFieldsException;
 import com.system.Learning_system_springboot_angular.security.CustomUserDetailsService;
 import com.system.Learning_system_springboot_angular.security.JwtUtil;
-import com.system.Learning_system_springboot_angular.security.LoginRequest;
+import com.system.Learning_system_springboot_angular.model.dto.LoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,17 +27,37 @@ public class AuthController {
     private CustomUserDetailsService userDetailsService;
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserServicer userService;
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<ApiResponse<String>> login(@RequestBody LoginRequest loginRequest) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getUserCode(), loginRequest.getPassword())
             );
             UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getUserCode());
             String token = jwtUtil.generateToken(userDetails.getUsername());
-            return ResponseEntity.ok(token);
+            return ResponseEntity.ok(ApiResponse.success(200, "Login successful", "token : " + token));
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(401).body(ApiResponse.error(401, "Wrong password"));
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(404).body(ApiResponse.error(404, "User not found"));
         } catch (Exception e) {
-            return ResponseEntity.status(401).body("Invalid credentials");
+            return ResponseEntity.status(500).body(ApiResponse.error(500, "Internal server error"));
+        }
+    }
+    @PostMapping("/change_password")
+    public ResponseEntity<ApiResponse<String>> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+        String userCode = SecurityContextHolder.getContext().getAuthentication().getName();
+        try {
+            userService.changePassword(userCode, changePasswordRequest.getCurrentPassword(), changePasswordRequest.getNewPassword());
+            return ResponseEntity.ok(ApiResponse.success(200, "Password changed successfully", null));
+        } catch (InvalidFieldsException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(400, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(ApiResponse.error(500, userCode)); //userCode will show anonymousUser
         }
     }
 }

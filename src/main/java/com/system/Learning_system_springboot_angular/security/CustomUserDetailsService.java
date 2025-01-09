@@ -1,7 +1,6 @@
 package com.system.Learning_system_springboot_angular.security;
 
-import com.system.Learning_system_springboot_angular.model.entity.User;
-import com.system.Learning_system_springboot_angular.service.UserService;
+import com.system.Learning_system_springboot_angular.model.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,14 +11,14 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-    private final UserService userService;
+    private final UserServicer userService;
     @Autowired
-    public CustomUserDetailsService(UserService userService) {
+    public CustomUserDetailsService(UserServicer userService) {
         this.userService = userService;
     }
     @Override
     public UserDetails loadUserByUsername(String userCode) throws UsernameNotFoundException {
-        User user = userService.getByCode(userCode);
+        UserDTO user = userService.getByCode(userCode);
         if (user == null) {
             throw new UsernameNotFoundException("User not found with code: " + userCode);
         }

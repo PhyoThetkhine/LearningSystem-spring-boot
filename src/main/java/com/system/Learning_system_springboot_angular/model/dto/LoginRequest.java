@@ -1,4 +1,4 @@
-package com.system.Learning_system_springboot_angular.security;
+package com.system.Learning_system_springboot_angular.model.dto;
 public class LoginRequest {
     private String userCode;
     private String password;
