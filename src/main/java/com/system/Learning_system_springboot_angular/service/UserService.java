@@ -16,10 +16,16 @@ import static com.system.Learning_system_springboot_angular.service.PasswordGene
 
 @Service
 public class UserService {
+
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public UserService(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+
 
     public User saveUser(User user) throws InvalidFieldsException {
 
@@ -38,10 +44,13 @@ public class UserService {
             throw new ServiceException("Permission denied!");
         }
         user.setCreateAdmin(creator);
-        user.setPassword(passwordEncoder.encode(generatePassword()));
+
+       user.setPassword(passwordEncoder.encode("yan_kee"));
+
         user.setUserCode(generateUserCode(user.getRole()));
         return userRepository.save(user);
     }
+
 
     private String generateUserCode(Role role) {
         String prefix = switch (role) {
@@ -53,9 +62,12 @@ public class UserService {
         Long count = userRepository.countByRole(role);
         return prefix + String.format("%04d", count + 1);
     }
+    public User getByCode(String code){
+        return userRepository.findByUserCode(code).orElseThrow(() -> new UserNotFoundException("User Not Found"));
+    }
 
     public User getById(Integer Id){
-        return  userRepository.findById(Id).orElseThrow(() -> new ServiceException("User not Found"));
+        return  userRepository.findById(Id).orElseThrow(() -> new UserNotFoundException("User not Found"));
     }
 
 
