@@ -28,8 +28,6 @@ public class GlobalExceptionHandler {
         ApiResponse<?> response = ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
         return ResponseEntity.internalServerError().body(response);
     }
-
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<?>> handleGenericException(Exception ex) {
         ApiResponse<?> response = ApiResponse.error(
@@ -38,4 +36,5 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity.internalServerError().body(response);
     }
+
 }

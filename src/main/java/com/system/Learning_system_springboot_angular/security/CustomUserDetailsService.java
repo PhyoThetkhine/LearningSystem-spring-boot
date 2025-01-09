@@ -12,23 +12,17 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-
     private final UserService userService;
-
     @Autowired
     public CustomUserDetailsService(UserService userService) {
         this.userService = userService;
     }
     @Override
     public UserDetails loadUserByUsername(String userCode) throws UsernameNotFoundException {
-        // Retrieve user by userCode from the database
         User user = userService.getByCode(userCode);
-
         if (user == null) {
             throw new UsernameNotFoundException("User not found with code: " + userCode);
         }
-
-        // Return a Spring Security User object
         return new org.springframework.security.core.userdetails.User(
                 user.getUserCode(), // Use userCode as the username
                 user.getPassword(),

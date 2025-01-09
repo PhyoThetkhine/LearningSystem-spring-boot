@@ -7,32 +7,21 @@ import com.system.Learning_system_springboot_angular.model.exception.UserNotFoun
 import com.system.Learning_system_springboot_angular.model.repo.UserRepository;
 import com.system.Learning_system_springboot_angular.model.exception.InvalidFieldsException;
 import com.system.Learning_system_springboot_angular.model.exception.ServiceException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.Objects;
-import static com.system.Learning_system_springboot_angular.service.PasswordGenerator.generatePassword;
-
 @Service
 public class UserService {
-
     private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public UserService(PasswordEncoder passwordEncoder) {
+    private final UserRepository userRepository;
+    public UserService(PasswordEncoder passwordEncoder,UserRepository userRepository) {
+        this.userRepository= userRepository;
         this.passwordEncoder = passwordEncoder;
     }
-    @Autowired
-    private UserRepository userRepository;
-
-
     public User saveUser(User user) throws InvalidFieldsException {
-
         User activeDuplicate = userRepository.findByEmailAndStatus(user.getEmail(), Status.ACTIVE);
         if (activeDuplicate != null && !Objects.equals(user.getId(), activeDuplicate.getId())) {
-            throw new InvalidFieldsException("A user with this email already exists as a "+activeDuplicate.getRole().getDisplayName());
-
+            throw new InvalidFieldsException("A user with this email already exists as a " + activeDuplicate.getRole().getDisplayName());
         } else {
             User terminatedDuplicate = userRepository.findByEmailAndStatus(user.getEmail(), Status.TERMINATE);
             if (terminatedDuplicate != null && !Objects.equals(user.getId(), terminatedDuplicate.getId())) {
@@ -44,14 +33,10 @@ public class UserService {
             throw new ServiceException("Permission denied!");
         }
         user.setCreateAdmin(creator);
-
-       user.setPassword(passwordEncoder.encode("yan_kee"));
-
+        user.setPassword(passwordEncoder.encode("yan_kee"));
         user.setUserCode(generateUserCode(user.getRole()));
         return userRepository.save(user);
     }
-
-
     private String generateUserCode(Role role) {
         String prefix = switch (role) {
             case ADMIN -> "ADM";
@@ -65,10 +50,7 @@ public class UserService {
     public User getByCode(String code){
         return userRepository.findByUserCode(code).orElseThrow(() -> new UserNotFoundException("User Not Found"));
     }
-
-    public User getById(Integer Id){
-        return  userRepository.findById(Id).orElseThrow(() -> new UserNotFoundException("User not Found"));
+    public User getById(Integer Id) {
+        return userRepository.findById(Id).orElseThrow(() -> new UserNotFoundException("User not Found"));
     }
-
-
 }
