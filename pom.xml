@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.system</groupId>
-	<artifactId>Learning_system_springboot_angular</artifactId>
+	<artifactId>Learning_system_springboot</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Learning_system_springboot_angular</name>
 	<description>Demo project for Spring Boot</description>
