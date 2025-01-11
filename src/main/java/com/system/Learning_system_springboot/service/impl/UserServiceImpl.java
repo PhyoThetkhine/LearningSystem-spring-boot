@@ -11,12 +11,12 @@ import com.system.Learning_system_springboot.model.repo.UserRepository;
 import com.system.Learning_system_springboot.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
+
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -30,6 +30,7 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
+
     @Override
     public UserDTO saveUser(UserDTO dto) throws InvalidFieldsException {
         User activeDuplicate = userRepository.findByEmailAndStatus(dto.getEmail(), Status.ACTIVE);
@@ -53,7 +54,8 @@ public class UserServiceImpl implements UserService {
         User savedUser = userRepository.save(user);
         return modelMapper.map(savedUser, UserDTO.class);
     }
-@Override
+
+    @Override
     public String generateUserCode(Role role) {
         String prefix = switch (role) {
             case ADMIN -> "ADM";
@@ -64,54 +66,56 @@ public class UserServiceImpl implements UserService {
         Long count = userRepository.countByRole(role);
         return prefix + String.format("%04d", count + 1);
     }
-@Override
+
+    @Override
     public UserDTO getByCode(String code) {
         User user = userRepository.findByUserCode(code)
                 .orElseThrow(() -> new UserNotFoundException("User Not Found"));
         return modelMapper.map(user, UserDTO.class);
     }
-@Override
+
+    @Override
     public UserDTO getById(Integer id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not Found"));
         return modelMapper.map(user, UserDTO.class);
     }
-@Override
-    public List<UserDTO> getAllUser() {
-        List<User> users = userRepository.findAll();
-        return users.stream()
-                .map(user -> modelMapper.map(user, UserDTO.class))
-                .collect(Collectors.toList());
+
+    @Override
+    public Page<UserDTO> getAllUser(Pageable pageable) {
+        Page<User> users = userRepository.findAll(pageable);
+        return users.map(user -> modelMapper.map(user, UserDTO.class));
     }
-@Override
+
+    @Override
     public void terminateUserById(Integer id) {
         User deleteUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User Not Found"));
         deleteUser.setStatus(Status.TERMINATE);
         userRepository.save(deleteUser);
     }
-@Override
+
+    @Override
     public void activeUserById(Integer id) {
         User activeUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User Not Found"));
         activeUser.setStatus(Status.ACTIVE);
         userRepository.save(activeUser);
     }
-@Override
-    public List<UserDTO> findStudentsNotEnrolledInCourse(Integer courseId) {
-        List<User> students = userRepository.findStudentsNotEnrolledInCourse(courseId);
-        return students.stream()
-                .map(student -> modelMapper.map(student, UserDTO.class))
-                .collect(Collectors.toList());
+
+    @Override
+    public Page<UserDTO> findStudentsNotEnrolledInCourse(Integer courseId, Pageable pageable) {
+        Page<User> students = userRepository.findStudentsNotEnrolledInCourse(courseId, pageable);
+        return students.map(student -> modelMapper.map(student, UserDTO.class));
     }
-@Override
-    public List<UserDTO> findTeachersNotAssignedToCourse(Integer courseId) {
-        List<User> teachers = userRepository.findTeachersNotAssignedToCourse(courseId);
-        return teachers.stream()
-                .map(teacher -> modelMapper.map(teacher, UserDTO.class))
-                .collect(Collectors.toList());
+
+    @Override
+    public Page<UserDTO> findTeachersNotAssignedToCourse(Integer courseId, Pageable pageable) {
+        Page<User> teachers = userRepository.findTeachersNotAssignedToCourse(courseId, pageable);
+        return teachers.map(teacher -> modelMapper.map(teacher, UserDTO.class));
     }
-@Override
+
+    @Override
     public void changePassword(String userCode, String currentPassword, String newPassword) {
         User user = userRepository.findByUserCode(userCode)
                 .orElseThrow(() -> new UserNotFoundException("User Not Found"));
@@ -121,7 +125,8 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
-@Override
+
+    @Override
     public UserDTO updateByUser(UserDTO dto) {
         User existingUser = userRepository.findById(dto.getId())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -130,5 +135,4 @@ public class UserServiceImpl implements UserService {
         User updatedUser = userRepository.save(existingUser);
         return modelMapper.map(updatedUser, UserDTO.class);
     }
-
 }
