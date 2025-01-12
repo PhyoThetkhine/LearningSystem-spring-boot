@@ -59,14 +59,6 @@ public class SubmissionFileServiceImpl implements SubmissionFileService {
         submissionFileRepository.save(submissionFile);
     }
 
-    @Override
-    public List<SubmissionFileDTO> getFilesBySubmissionIdAndStudentId(Integer submissionId, Integer studentId) {
-        List<SubmissionFile> submissionFiles = submissionFileRepository.findBySubmissionIdAndStudentId(submissionId, studentId);
-        return submissionFiles.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
-
     private SubmissionFileDTO convertToDTO(SubmissionFile submissionFile) {
         modelMapper.getConfiguration().setSkipNullEnabled(true);
         SubmissionFileDTO dto = modelMapper.map(submissionFile, SubmissionFileDTO.class);

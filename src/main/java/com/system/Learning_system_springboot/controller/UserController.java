@@ -26,11 +26,13 @@ public class UserController {
         ApiResponse<UserDTO> response = ApiResponse.success(HttpStatus.OK.value(), "User created successfully", savedUser);
         return ResponseEntity.ok(response);
     }
-    @GetMapping("users")
+
+    @GetMapping("users") //GET http://localhost:8080/api/user/users?page=0&size=20&sortBy=id
     public ResponseEntity<?> getUsers(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "id") String sortBy) {
+        sortBy = sortBy.trim();
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         Page<UserDTO> users = userService.getAllUser(pageable);
         ApiResponse<Page<UserDTO>> response = ApiResponse.success(HttpStatus.OK.value(), "Users List", users);

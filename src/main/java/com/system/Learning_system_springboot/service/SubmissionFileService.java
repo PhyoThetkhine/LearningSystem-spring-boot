@@ -12,5 +12,4 @@ public interface SubmissionFileService {
     List<SubmissionFileDTO> getFilesBySubmissionId(Integer submissionId);
      SubmissionFileDTO getFileById(Integer Id);
      void saveNewFile(SubmissionFileDTO submissionFileDTO);
-     List<SubmissionFileDTO> getFilesBySubmissionIdAndStudentId(Integer submissionId, Integer studentId);
 }

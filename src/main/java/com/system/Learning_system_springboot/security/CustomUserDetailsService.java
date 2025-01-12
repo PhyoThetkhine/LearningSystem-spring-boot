@@ -12,11 +12,14 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
+
     private final UserService userService;
+
     @Autowired
     public CustomUserDetailsService(UserService userService) {
         this.userService = userService;
     }
+
     @Override
     public UserDetails loadUserByUsername(String userCode) throws UsernameNotFoundException {
         UserDTO user = userService.getByCode(userCode);
@@ -24,9 +27,9 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found with code: " + userCode);
         }
         return new org.springframework.security.core.userdetails.User(
-                user.getUserCode(), // Use userCode as the username
+                user.getUserCode(),
                 user.getPassword(),
-                Arrays.asList(new SimpleGrantedAuthority(user.getRole().name()))
+                Arrays.asList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
         );
     }
 }

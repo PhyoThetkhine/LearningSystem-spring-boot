@@ -9,5 +9,4 @@ import java.util.List;
 @Repository
 public interface SubmissionFileRepository extends JpaRepository<SubmissionFile , Integer> {
     List<SubmissionFile> findBySubmissionId(Integer submissionId);
-    List<SubmissionFile> findBySubmissionIdAndStudentId(Integer submissionId, Integer studentId);
 }
