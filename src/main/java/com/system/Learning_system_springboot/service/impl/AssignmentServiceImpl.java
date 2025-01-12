@@ -15,12 +15,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class AssignmentServiceImpl implements AssignmentService {
-
-    @Autowired
-    private AssignmentRepository assignmentRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    private final AssignmentRepository assignmentRepository;
+    private final ModelMapper modelMapper;
+    public AssignmentServiceImpl(AssignmentRepository assignmentRepository, ModelMapper modelMapper) {
+        this.assignmentRepository = assignmentRepository;
+        this.modelMapper = modelMapper;
+    }
 
     @Override
     public void save(AssignmentDTO assignmentDTO) {

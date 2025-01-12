@@ -1,5 +1,6 @@
 package com.system.Learning_system_springboot.service.impl;
 
+import com.system.Learning_system_springboot.model.dto.SubmissionDTO;
 import com.system.Learning_system_springboot.model.dto.SubmissionFileDTO;
 import com.system.Learning_system_springboot.model.entity.Submission;
 import com.system.Learning_system_springboot.model.entity.SubmissionFile;
@@ -9,6 +10,8 @@ import com.system.Learning_system_springboot.model.repo.SubmissionRepository;
 import com.system.Learning_system_springboot.service.SubmissionFileService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,6 +42,7 @@ public class SubmissionFileServiceImpl implements SubmissionFileService {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
+
     @Override
     public SubmissionFileDTO getFileById(Integer id) {
         SubmissionFile submissionFile = submissionFileRepository.findById(id)
@@ -54,6 +58,15 @@ public class SubmissionFileServiceImpl implements SubmissionFileService {
         submissionFile.setSubmission(submission);
         submissionFileRepository.save(submissionFile);
     }
+
+    @Override
+    public List<SubmissionFileDTO> getFilesBySubmissionIdAndStudentId(Integer submissionId, Integer studentId) {
+        List<SubmissionFile> submissionFiles = submissionFileRepository.findBySubmissionIdAndStudentId(submissionId, studentId);
+        return submissionFiles.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     private SubmissionFileDTO convertToDTO(SubmissionFile submissionFile) {
         modelMapper.getConfiguration().setSkipNullEnabled(true);
         SubmissionFileDTO dto = modelMapper.map(submissionFile, SubmissionFileDTO.class);

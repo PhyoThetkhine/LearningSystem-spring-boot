@@ -11,11 +11,11 @@ public interface UserService {
     String generateUserCode(Role role);
     UserDTO getByCode(String code);
     UserDTO getById(Integer id);
-    Page<UserDTO> getAllUser(Pageable pageable); // Updated to return Page<UserDTO>
+    Page<UserDTO> getAllUser(Pageable pageable);
     void terminateUserById(Integer id);
     void activeUserById(Integer id);
-    Page<UserDTO> findStudentsNotEnrolledInCourse(Integer courseId, Pageable pageable); // Updated to return Page<UserDTO>
-    Page<UserDTO> findTeachersNotAssignedToCourse(Integer courseId, Pageable pageable); // Updated to return Page<UserDTO>
+    List<UserDTO> findStudentsNotEnrolledInCourse(Integer courseId);
+    List<UserDTO> findTeachersNotAssignedToCourse(Integer courseId);
     void changePassword(String userCode, String currentPassword, String newPassword);
     UserDTO updateByUser(UserDTO dto);
 }

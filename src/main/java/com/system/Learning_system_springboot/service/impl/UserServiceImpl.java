@@ -15,20 +15,24 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @Service
 public class UserServiceImpl implements UserService {
-    @Autowired
-    private ModelMapper modelMapper;
+
+    private final ModelMapper modelMapper;
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
-    public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository) {
+    public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository,ModelMapper modelMapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -104,15 +108,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserDTO> findStudentsNotEnrolledInCourse(Integer courseId, Pageable pageable) {
-        Page<User> students = userRepository.findStudentsNotEnrolledInCourse(courseId, pageable);
-        return students.map(student -> modelMapper.map(student, UserDTO.class));
+    public List<UserDTO> findStudentsNotEnrolledInCourse(Integer courseId) {
+        List<User> students = userRepository.findStudentsNotEnrolledInCourse(courseId);
+        return students.stream()
+                .map(student -> modelMapper.map(student, UserDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Page<UserDTO> findTeachersNotAssignedToCourse(Integer courseId, Pageable pageable) {
-        Page<User> teachers = userRepository.findTeachersNotAssignedToCourse(courseId, pageable);
-        return teachers.map(teacher -> modelMapper.map(teacher, UserDTO.class));
+    public List<UserDTO> findTeachersNotAssignedToCourse(Integer courseId) {
+        List<User> teachers = userRepository.findTeachersNotAssignedToCourse(courseId);
+        return teachers.stream()
+                .map(teacher -> modelMapper.map(teacher, UserDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override

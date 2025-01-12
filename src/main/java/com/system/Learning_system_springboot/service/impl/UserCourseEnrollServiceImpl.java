@@ -6,10 +6,12 @@ import com.system.Learning_system_springboot.model.entity.Status;
 import com.system.Learning_system_springboot.model.entity.UserCourseEnroll;
 import com.system.Learning_system_springboot.model.entity.UserCourseEnroll.UserCourseEnrollPK;
 import com.system.Learning_system_springboot.model.exception.ServiceException;
-
 import com.system.Learning_system_springboot.model.repo.UserCourseEnrollRepository;
 import com.system.Learning_system_springboot.service.UserCourseEnrollService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,32 +23,53 @@ public class UserCourseEnrollServiceImpl implements UserCourseEnrollService {
     @Autowired
     private UserCourseEnrollRepository userCourseEnrollRepository;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Override
-    public List<UserCourseEnrollDTO> findActiveStudentByCourse(Integer courseId) {
+    public Page<UserCourseEnrollDTO> findActiveStudentByCourse(Integer courseId, Pageable pageable) {
         return userCourseEnrollRepository.findByCourseIdAndEnrollPositionAndStatus(
-                courseId, EnrollPosition.STUDENT_ENROLL, Status.ACTIVE
-        ).stream().map(this::convertToDTO).collect(Collectors.toList());
+                courseId, EnrollPosition.STUDENT_ENROLL, Status.ACTIVE, pageable
+        ).map(this::convertToDTO);
     }
 
     @Override
     public List<UserCourseEnrollDTO> findDropStudentByCourse(Integer courseId) {
         return userCourseEnrollRepository.findByCourseIdAndEnrollPositionAndStatus(
-                courseId, EnrollPosition.STUDENT_ENROLL, Status.DROP
-        ).stream().map(this::convertToDTO).collect(Collectors.toList());
+                        courseId, EnrollPosition.STUDENT_ENROLL, Status.DROP
+                ).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<UserCourseEnrollDTO> findActiveTeacherByCourse(Integer courseId) {
+    public Page<UserCourseEnrollDTO> findDropStudentByCourse(Integer courseId, Pageable pageable) {
         return userCourseEnrollRepository.findByCourseIdAndEnrollPositionAndStatus(
-                courseId, EnrollPosition.TEACHER_ENROLL, Status.ACTIVE
-        ).stream().map(this::convertToDTO).collect(Collectors.toList());
+                courseId, EnrollPosition.STUDENT_ENROLL, Status.DROP, pageable
+        ).map(this::convertToDTO);
+    }
+
+    @Override
+    public Page<UserCourseEnrollDTO> findActiveTeacherByCourse(Integer courseId, Pageable pageable) {
+        return userCourseEnrollRepository.findByCourseIdAndEnrollPositionAndStatus(
+                courseId, EnrollPosition.TEACHER_ENROLL, Status.ACTIVE, pageable
+        ).map(this::convertToDTO);
     }
 
     @Override
     public List<UserCourseEnrollDTO> findDropTeacherByCourse(Integer courseId) {
         return userCourseEnrollRepository.findByCourseIdAndEnrollPositionAndStatus(
-                courseId, EnrollPosition.TEACHER_ENROLL, Status.DROP
-        ).stream().map(this::convertToDTO).collect(Collectors.toList());
+                        courseId, EnrollPosition.TEACHER_ENROLL, Status.DROP
+                ).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<UserCourseEnrollDTO> findDropTeacherByCourse(Integer courseId, Pageable pageable) {
+        return userCourseEnrollRepository.findByCourseIdAndEnrollPositionAndStatus(
+                courseId, EnrollPosition.TEACHER_ENROLL, Status.DROP, pageable
+        ).map(this::convertToDTO);
     }
 
     @Override
@@ -87,43 +110,18 @@ public class UserCourseEnrollServiceImpl implements UserCourseEnrollService {
     }
 
     @Override
-    public List<UserCourseEnrollDTO> getAll() {
-        return userCourseEnrollRepository.findAll().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+    public Page<UserCourseEnrollDTO> getAll(Pageable pageable) {
+        return userCourseEnrollRepository.findAll(pageable)
+                .map(this::convertToDTO);
     }
 
-    // Helper method to convert Entity to DTO
+    // Helper method to convert Entity to DTO using ModelMapper
     private UserCourseEnrollDTO convertToDTO(UserCourseEnroll userCourseEnroll) {
-        UserCourseEnrollDTO dto = new UserCourseEnrollDTO();
-        dto.setCourseId(userCourseEnroll.getCourse().getId());
-        dto.setCourse(userCourseEnroll.getCourse());
-        dto.setUserId(userCourseEnroll.getUser().getId());
-        dto.setUser(userCourseEnroll.getUser());
-        dto.setCreateAdminId(userCourseEnroll.getCreateAdmin().getId());
-        dto.setCreateAdmin(userCourseEnroll.getCreateAdmin());
-        dto.setCreateAdminName(userCourseEnroll.getCreateAdmin().getName());
-        dto.setStatus(userCourseEnroll.getStatus().name());
-        dto.setCreateDate(userCourseEnroll.getCreateDate());
-        dto.setUpdateDate(userCourseEnroll.getUpdateDate());
-        dto.setEnrollPosition(userCourseEnroll.getEnrollPosition());
-        return dto;
+        return modelMapper.map(userCourseEnroll, UserCourseEnrollDTO.class);
     }
 
-    // Helper method to convert DTO to Entity
+    // Helper method to convert DTO to Entity using ModelMapper
     private UserCourseEnroll convertToEntity(UserCourseEnrollDTO dto) {
-        UserCourseEnroll userCourseEnroll = new UserCourseEnroll();
-        UserCourseEnrollPK id = new UserCourseEnrollPK();
-        id.setCourseId(dto.getCourseId());
-        id.setUserId(dto.getUserId());
-        userCourseEnroll.setId(id);
-        userCourseEnroll.setCourse(dto.getCourse());
-        userCourseEnroll.setUser(dto.getUser());
-        userCourseEnroll.setCreateAdmin(dto.getCreateAdmin());
-        userCourseEnroll.setStatus(Status.valueOf(dto.getStatus()));
-        userCourseEnroll.setCreateDate(dto.getCreateDate());
-        userCourseEnroll.setUpdateDate(dto.getUpdateDate());
-        userCourseEnroll.setEnrollPosition(dto.getEnrollPosition());
-        return userCourseEnroll;
+        return modelMapper.map(dto, UserCourseEnroll.class);
     }
 }

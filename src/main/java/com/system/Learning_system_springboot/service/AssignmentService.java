@@ -5,10 +5,10 @@ import com.system.Learning_system_springboot.model.dto.AssignmentDTO;
 import java.util.List;
 
 public interface AssignmentService {
-    public void save(AssignmentDTO dto) ;
-    public void update(AssignmentDTO dto) ;
-    public AssignmentDTO findById(Integer id) ;
-    public List<AssignmentDTO> findAll();
-    public void delete(Integer id) ;
-    public List<AssignmentDTO> findAssignmentsByCourseId(Integer courseId) ;
+     void save(AssignmentDTO dto) ;
+     void update(AssignmentDTO dto) ;
+     AssignmentDTO findById(Integer id) ;
+     List<AssignmentDTO> findAll();
+     void delete(Integer id) ;
+     List<AssignmentDTO> findAssignmentsByCourseId(Integer courseId) ;
 }

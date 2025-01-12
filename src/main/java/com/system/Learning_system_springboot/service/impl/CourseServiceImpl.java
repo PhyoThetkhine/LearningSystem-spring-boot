@@ -9,6 +9,9 @@ import com.system.Learning_system_springboot.model.repo.UserRepository;
 import com.system.Learning_system_springboot.service.CourseService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,14 +20,15 @@ import java.util.stream.Collectors;
 @Service
 public class CourseServiceImpl implements CourseService {
 
-    @Autowired
-    private CourseRepository courseRepository;
+    private final CourseRepository courseRepository;
+    private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    public CourseServiceImpl(CourseRepository courseRepository, UserRepository userRepository, ModelMapper modelMapper) {
+        this.courseRepository = courseRepository;
+        this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
+    }
 
     @Override
     public void save(CourseDTO courseDTO) {
@@ -35,6 +39,7 @@ public class CourseServiceImpl implements CourseService {
         course.setCreateAdmin(createAdmin);
         courseRepository.save(course);
     }
+
     @Override
     public CourseDTO findById(Integer id) {
         Course course = courseRepository.findById(id)
@@ -42,14 +47,14 @@ public class CourseServiceImpl implements CourseService {
         modelMapper.getConfiguration().setSkipNullEnabled(true);
         return modelMapper.map(course, CourseDTO.class);
     }
+
     @Override
-    public List<CourseDTO> findAll() {
-        List<Course> courses = courseRepository.findAll();
+    public Page<CourseDTO> findAll(Pageable pageable) {
+        Page<Course> courses = courseRepository.findAll(pageable);
         modelMapper.getConfiguration().setSkipNullEnabled(true);
-        return courses.stream()
-                .map(course -> modelMapper.map(course, CourseDTO.class))
-                .collect(Collectors.toList());
+        return courses.map(course -> modelMapper.map(course, CourseDTO.class));
     }
+
     @Override
     public void update(CourseDTO courseDTO) {
         Course existingCourse = courseRepository.findById(courseDTO.getId())
@@ -63,27 +68,25 @@ public class CourseServiceImpl implements CourseService {
         }
         courseRepository.save(existingCourse);
     }
+
     @Override
     public void delete(CourseDTO courseDTO) {
         modelMapper.getConfiguration().setSkipNullEnabled(true);
         Course course = modelMapper.map(courseDTO, Course.class);
         courseRepository.delete(course);
     }
+
     @Override
-    public List<CourseDTO> findCoursesByTeacherId(Integer teacherId) {
-        List<Course> courses = courseRepository.findByCreateAdminId(teacherId);
+    public Page<CourseDTO> findCoursesByTeacherId(Integer teacherId, Pageable pageable) {
+        Page<Course> courses = courseRepository.findCoursesByTeacherId(teacherId, pageable);
         modelMapper.getConfiguration().setSkipNullEnabled(true);
-        return courses.stream()
-                .map(course -> modelMapper.map(course, CourseDTO.class))
-                .collect(Collectors.toList());
+        return courses.map(course -> modelMapper.map(course, CourseDTO.class));
     }
+
     @Override
-    public List<CourseDTO> findCoursesByStudentId(Integer studentId) {
-        // Assuming you have a method in the repository to find courses by student ID
-        List<Course> courses = courseRepository.findCoursesByStudentId(studentId);
+    public Page<CourseDTO> findCoursesByStudentId(Integer studentId, Pageable pageable) {
+        Page<Course> courses = courseRepository.findCoursesByStudentId(studentId, pageable);
         modelMapper.getConfiguration().setSkipNullEnabled(true);
-        return courses.stream()
-                .map(course -> modelMapper.map(course, CourseDTO.class))
-                .collect(Collectors.toList());
+        return courses.map(course -> modelMapper.map(course, CourseDTO.class));
     }
 }

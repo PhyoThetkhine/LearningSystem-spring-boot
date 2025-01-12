@@ -5,10 +5,10 @@ import com.system.Learning_system_springboot.model.dto.MaterialDTO;
 import java.util.List;
 
 public interface MaterialService {
-    public void save(MaterialDTO material);
-    public  void update(MaterialDTO material);
-    public  MaterialDTO findById(Integer id);
-    public List<MaterialDTO> findAll();
-    public void delete(Integer id);
-    public List<MaterialDTO> findMaterialsByCourseId(Integer courseId);
+     void save(MaterialDTO material);
+      void update(MaterialDTO material);
+      MaterialDTO findById(Integer id);
+     List<MaterialDTO> findAll();
+     void delete(Integer id);
+     List<MaterialDTO> findMaterialsByCourseId(Integer courseId);
 }

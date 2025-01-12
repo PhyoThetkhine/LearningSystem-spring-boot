@@ -1,6 +1,8 @@
 package com.system.Learning_system_springboot.model.repo;
 import com.system.Learning_system_springboot.model.entity.Status;
 import com.system.Learning_system_springboot.model.entity.Submission;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

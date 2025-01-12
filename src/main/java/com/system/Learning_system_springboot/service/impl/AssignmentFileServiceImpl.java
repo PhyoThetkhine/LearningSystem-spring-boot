@@ -16,15 +16,15 @@ import java.util.stream.Collectors;
 
 @Service
 public class AssignmentFileServiceImpl implements AssignmentFileService {
+    private final AssignmentFileRepository assignmentFileRepository;
+    private final AssignmentRepository assignmentRepository;
+    private final ModelMapper modelMapper;
 
-    @Autowired
-    private AssignmentFileRepository assignmentFileRepository;
-
-    @Autowired
-    private AssignmentRepository assignmentRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    public AssignmentFileServiceImpl(AssignmentFileRepository assignmentFileRepository, AssignmentRepository assignmentRepository, ModelMapper modelMapper) {
+        this.assignmentFileRepository = assignmentFileRepository;
+        this.assignmentRepository = assignmentRepository;
+        this.modelMapper = modelMapper;
+    }
 
     @Override
     public void saveAssignmentFile(AssignmentFileDTO assignmentFileDTO) {
@@ -50,7 +50,7 @@ public class AssignmentFileServiceImpl implements AssignmentFileService {
     }
 
     @Override
-    public void addnewFile(AssignmentFileDTO dto) {
+    public void addNewFile(AssignmentFileDTO dto) {
         // Fetch the assignment entity
         Assignment assignment = assignmentRepository.findById(dto.getAssignmentID())
                 .orElseThrow(() -> new ServiceException("Assignment not found with id: " + dto.getAssignmentID()));
