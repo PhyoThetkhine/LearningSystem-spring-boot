@@ -7,7 +7,7 @@ public enum Status {
     DROP("Drop"),
     DRAFT("Draft"),
     PUBLISHED("Published"),
-    SCHEDULED("Scheduled");
+        SCHEDULED("Scheduled");
 
 
     private String displayName;

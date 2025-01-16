@@ -11,11 +11,8 @@ public class UserDTO {
     private String email;
     private String name;
     private String status;
-    private Integer roleId;
-    private String roleName;
     private String password;
-    private Integer createAdminId;
-    private String createAdminName;
+    private String createAdminCode;
     private User createAdmin;
     private Role role;
     private Date createDate;
@@ -61,21 +58,6 @@ public class UserDTO {
         this.status = status;
     }
 
-    public String getRoleName() {
-        return roleName;
-    }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
-
-    public Integer getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(Integer roleId) {
-        this.roleId = roleId;
-    }
 
     public String getPassword() {
         return password;
@@ -85,20 +67,12 @@ public class UserDTO {
         this.password = password;
     }
 
-    public Integer getCreateAdminId() {
-        return createAdminId;
+    public String getCreateAdminCode() {
+        return createAdminCode;
     }
 
-    public void setCreateAdminId(Integer createAdminId) {
-        this.createAdminId = createAdminId;
-    }
-
-    public String getCreateAdminName() {
-        return createAdminName;
-    }
-
-    public void setCreateAdminName(String createAdminName) {
-        this.createAdminName = createAdminName;
+    public void setCreateAdminCode(String createAdminCode) {
+        this.createAdminCode = createAdminCode;
     }
 
     public User getCreateAdmin() {

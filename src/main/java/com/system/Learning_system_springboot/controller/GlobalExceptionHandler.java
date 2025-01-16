@@ -1,6 +1,9 @@
-package com.system.Learning_system_springboot.model.exception;
+package com.system.Learning_system_springboot.controller;
 
 import com.system.Learning_system_springboot.model.dto.ApiResponse;
+import com.system.Learning_system_springboot.model.exception.InvalidFieldsException;
+import com.system.Learning_system_springboot.model.exception.ServiceException;
+import com.system.Learning_system_springboot.model.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
